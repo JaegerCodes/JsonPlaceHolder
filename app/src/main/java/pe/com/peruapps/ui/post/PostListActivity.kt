@@ -28,6 +28,7 @@ class PostListActivity: AppCompatActivity() {
                 errorMessage -> if(errorMessage != null) showError(errorMessage) else hideError()
         })
         binding.viewModel = viewModel
+
     }
 
     private fun showError(@StringRes errorMessage:Int) {

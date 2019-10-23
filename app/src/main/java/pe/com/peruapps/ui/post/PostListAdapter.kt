@@ -1,23 +1,37 @@
 package pe.com.peruapps.ui.post
 
+import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import pe.com.peruapps.R
 import pe.com.peruapps.databinding.ItemPostBinding
 import pe.com.peruapps.model.Post
+import pe.com.peruapps.ui.postdetail.PostDetailActivity
 
-class PostListAdapter: RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
+typealias OnClickPostListener = (View, Post) -> Unit
+
+class PostListAdapter(
+    private val onClickPostListener: OnClickPostListener
+): RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
     private lateinit var postList:List<Post>
+    private lateinit var context: Context
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostListAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        context = parent.context
         val binding: ItemPostBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_post, parent, false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: PostListAdapter.ViewHolder, position: Int) {
-        holder.bind(postList[position])
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val post = postList[position]
+        holder.itemView.setOnClickListener {
+                view -> onClickPostListener.invoke(view, post)
+        }
+        holder.bind(post)
     }
 
     override fun getItemCount(): Int {
@@ -29,7 +43,11 @@ class PostListAdapter: RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    class ViewHolder(private val binding: ItemPostBinding):RecyclerView.ViewHolder(binding.root){
+    fun openPostDetailActivity() {
+        context.startActivity(Intent(context, PostDetailActivity::class.java))
+    }
+
+    class ViewHolder(private val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
         private val viewModel = PostViewModel()
 
         fun bind(post:Post) {

@@ -17,7 +17,13 @@ class PostListViewModel(private val postDao: PostDao): BaseViewModel() {
     @Inject
     lateinit var postApi: PostApi
 
-    val postListAdapter: PostListAdapter = PostListAdapter()
+    val postListAdapter: PostListAdapter = PostListAdapter(
+        onClickPostListener = this::openPostDetail)
+
+    private fun openPostDetail(view: View, post: Post) {
+
+        postListAdapter.openPostDetailActivity()
+    }
 
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
     val errorMessage:MutableLiveData<Int> = MutableLiveData()
