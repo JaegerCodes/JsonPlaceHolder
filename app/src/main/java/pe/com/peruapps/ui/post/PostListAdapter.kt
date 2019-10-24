@@ -1,6 +1,5 @@
 package pe.com.peruapps.ui.post
 
-import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
@@ -17,11 +16,9 @@ typealias OnClickPostListener = (View, Post) -> Unit
 class PostListAdapter(
     private val onClickPostListener: OnClickPostListener
 ): RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
-    private lateinit var postList:List<Post>
-    private lateinit var context: Context
+    private lateinit var postList: List<Post>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        context = parent.context
         val binding: ItemPostBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_post, parent, false)
         return ViewHolder(binding)
     }
@@ -38,19 +35,20 @@ class PostListAdapter(
         return if(::postList.isInitialized) postList.size else 0
     }
 
-    fun updatePostList(postList:List<Post>) {
+    fun updatePostList(postList: List<Post>) {
         this.postList = postList
         notifyDataSetChanged()
     }
 
-    fun openPostDetailActivity() {
-        context.startActivity(Intent(context, PostDetailActivity::class.java))
+    fun openPostDetailActivity(view: View, post: Post) {
+        view.context.startActivity(
+            Intent(view.context, PostDetailActivity::class.java).putExtra("KEY_ID_POST", post.id))
     }
 
     class ViewHolder(private val binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
         private val viewModel = PostViewModel()
 
-        fun bind(post:Post) {
+        fun bind(post: Post) {
             viewModel.bind(post)
             binding.viewModel = viewModel
         }
